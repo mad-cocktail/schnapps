@@ -1,13 +1,16 @@
 Set charset name and preprocess strings
 =======================================
 
-It is a tiny parse transform.
+It is a tiny parse transform, that converts literal strings into something
+else.
 
 __License__: MIT
 
 __Author__: Uvarov Michael ([`freeakk@gmail.com`](mailto:freeakk@gmail.com))
 
-[![Build Status](https://secure.travis-ci.org/freeakk/gin.png?branch=master)](http://travis-ci.org/freeakk/gin)
+__Status__: Experimental
+
+[![Build Status](https://secure.travis-ci.org/freeakk/schnapps.png?branch=master)](http://travis-ci.org/freeakk/schnapps)
 
 
 ```erlang
