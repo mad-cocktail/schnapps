@@ -9,7 +9,7 @@ parse_transform(Forms, _Options) ->
         EncRec = decode_encoding(to_term(EncodingAttr)),
         F = encoder(EncRec),
         X = [case erl_syntax:type(SubTree) of
-             function -> postorder(F, SubTree);
+             function -> erl_syntax:revert(erl_syntax_lib:map(F, SubTree));
              _Type -> SubTree
              end || SubTree <- Forms],
 %       io:format(user, "Before:\t~p\n\nAfter:\t~p\n", [Forms, X]),
@@ -54,7 +54,7 @@ convert_standard_presetation_to_wanted(From, ToEnc, ToType) ->
     end.
 
 to_term(Expr) ->
-    {value, Value, _} = erl_eval:exprs(revert_tree([Expr]), []),
+    {value, Value, _} = erl_eval:exprs(revert_tree(Expr), []),
     Value.
 
 revert_tree(Tree) ->
@@ -64,21 +64,3 @@ extract_encoding_name(Forms) ->
     [erl_syntax:attribute_arguments(F)
        || F <- Forms, erl_syntax:type(F) =:= attribute,
           erl_syntax:atom_value(erl_syntax:attribute_name(F)) =:= encoding].
-
-
-postorder(F, Form) ->
-    NewTree =
-        case erl_syntax:subtrees(Form) of
-        [] ->
-            Form;
-        List ->
-            Groups = [handle_group(F, Group) || Group <- List],
-            Tree2 = erl_syntax:update_tree(Form, Groups),
-            Form2 = erl_syntax:revert(Tree2),
-            Form2
-        end,
-    F(NewTree).
-
-
-handle_group(F, Group) ->
-    [postorder(F, Subtree) || Subtree <- Group].
